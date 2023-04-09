@@ -1,50 +1,50 @@
+import json
 import requests
+import lxml
 from bs4 import BeautifulSoup as bs
-from selenium import webdriver
 
 CRYPTO_TOP_URL = "https://coinmarketcap.com/"
-RED_CUP_URL = "https://ascendex.com/ru/cashtrade-spottrading/usd/"
-GREEN_CUP_URL = "https://www.gate.io/ru/trade/"
-
-options = webdriver.ChromeOptions()
-options.add_argument('headless')
-options.add_argument('window-size=1920x1080')
-options.add_argument("disable-gpu")
-
-driver = webdriver.Chrome('chromedriver', chrome_options=options)
-driver.headless = True
+TEST_CRYPTO_TOP_URL = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=11&limit=139&sortBy" \
+                      "=market_cap&sortType=desc&convert=USD,BTC," \
+                      "ETH&cryptoType=all&tagType=all&audited=false&aux=ath,atl,high24h,low24h,num_market_pairs," \
+                      "cmc_rank,date_added,max_supply,circulating_supply,total_supply,volume_7d,volume_30d," \
+                      "self_reported_circulating_supply,self_reported_market_cap"
+RED_CUP_URL = "https://ascendex.com/api/pro/v1/depth?symbol="
+GREEN_CUP_URL = "https://api.gateio.ws/api/v4/spot/order_book?currency_pair="
 
 
 def get_currencies():
     currencies = []
 
-    res = requests.get(CRYPTO_TOP_URL)
-    soup = bs(res.text, "html.parser")
-    top_10 = soup.find_all('p', class_="coin-item-symbol")
+    res = requests.get(TEST_CRYPTO_TOP_URL)
+    soup = bs(res.text, "lxml")
+    load = json.loads(soup.text)
 
-    for pos in top_10:
-        currencies.append(pos.text)
+    for symbol in load["data"]["cryptoCurrencyList"]:
+        currencies.append(symbol["symbol"])
 
     return currencies
 
 
 def get_bot_value(currency):
-    url = RED_CUP_URL + currency.lower()
+    res = requests.get(RED_CUP_URL + currency.upper() + "/USD")
 
-    driver.get(url)
-    res = driver.page_source
-    soup = bs(res, "html.parser")
-    value = soup.find('span', class_="span-body price down-color")
+    soup = bs(res.text, "lxml")
+    load = json.loads(soup.text)
 
-    return float(value.text)
+    try:
+        return float(load["data"]["data"]["asks"][0][0])
+    except:
+        return "unavailable"
 
 
 def get_top_value(currency):
-    url = GREEN_CUP_URL + currency.upper() + "_USD"
+    res = requests.get(GREEN_CUP_URL + currency.upper() + "_USD")
 
-    driver.get(url)
-    res = driver.page_source
-    soup = bs(res, "html.parser")
-    value = soup.find('span', class_="price font-add-color")
+    soup = bs(res.text, "lxml")
+    load = json.loads(soup.text)
 
-    return float(value.text)
+    try:
+        return float(load["bids"][0])
+    except:
+        return "unavailable"
