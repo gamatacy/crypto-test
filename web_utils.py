@@ -13,6 +13,7 @@ RED_CUP_URL = "https://ascendex.com/api/pro/v1/depth?symbol="
 GREEN_CUP_URL = "https://api.gateio.ws/api/v4/spot/order_book?currency_pair="
 SECOND_CURRENCY = "USDT"
 
+
 def get_currencies():
     currencies = []
 
@@ -29,6 +30,8 @@ def get_currencies():
 def get_bot_value(currency):
     res = requests.get(RED_CUP_URL + currency.upper() + "/" + SECOND_CURRENCY)
 
+    print(currency + " " + res.text)
+
     soup = bs(res.text, "lxml")
     load = json.loads(soup.text)
 
@@ -41,10 +44,12 @@ def get_bot_value(currency):
 def get_top_value(currency):
     res = requests.get(GREEN_CUP_URL + currency.upper() + "_" + SECOND_CURRENCY)
 
+    print(currency + " " + res.text)
+
     soup = bs(res.text, "lxml")
     load = json.loads(soup.text)
 
     try:
-        return float(load["bids"][0])
+        return float(load['bids'][0][0])
     except:
         return "unavailable"
