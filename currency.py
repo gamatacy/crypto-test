@@ -7,3 +7,4 @@ class Currency:
 
     def get_info(self):
         return [self.name, self.bot_value, self.top_value]
+

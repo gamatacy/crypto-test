@@ -4,7 +4,7 @@ import lxml
 from bs4 import BeautifulSoup as bs
 
 CRYPTO_TOP_URL = "https://coinmarketcap.com/"
-TEST_CRYPTO_TOP_URL = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=11&limit=139&sortBy" \
+TEST_CRYPTO_TOP_URL = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=11&limit=140&sortBy" \
                       "=market_cap&sortType=desc&convert=USD,BTC," \
                       "ETH&cryptoType=all&tagType=all&audited=false&aux=ath,atl,high24h,low24h,num_market_pairs," \
                       "cmc_rank,date_added,max_supply,circulating_supply,total_supply,volume_7d,volume_30d," \
@@ -30,13 +30,10 @@ def get_currencies():
 def get_bot_value(currency):
     res = requests.get(RED_CUP_URL + currency.upper() + "/" + SECOND_CURRENCY)
 
-    print(currency + " " + res.text)
-
-    soup = bs(res.text, "lxml")
-    load = json.loads(soup.text)
-
     try:
-        return float(load["data"]["data"]["asks"][0][0])
+        soup = bs(res.text, "lxml")
+        load = json.loads(soup.text)
+        return '{0:.7f}'.format(float(load["data"]["data"]["asks"][0][0]))
     except:
         return "unavailable"
 
@@ -44,12 +41,9 @@ def get_bot_value(currency):
 def get_top_value(currency):
     res = requests.get(GREEN_CUP_URL + currency.upper() + "_" + SECOND_CURRENCY)
 
-    print(currency + " " + res.text)
-
-    soup = bs(res.text, "lxml")
-    load = json.loads(soup.text)
-
     try:
-        return float(load['bids'][0][0])
+        soup = bs(res.text, "lxml")
+        load = json.loads(soup.text)
+        return '{0:.7f}'.format(float(load['bids'][0][0]))
     except:
         return "unavailable"
