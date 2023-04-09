@@ -11,7 +11,7 @@ TEST_CRYPTO_TOP_URL = "https://api.coinmarketcap.com/data-api/v3/cryptocurrency/
                       "self_reported_circulating_supply,self_reported_market_cap"
 RED_CUP_URL = "https://ascendex.com/api/pro/v1/depth?symbol="
 GREEN_CUP_URL = "https://api.gateio.ws/api/v4/spot/order_book?currency_pair="
-
+SECOND_CURRENCY = "USDT"
 
 def get_currencies():
     currencies = []
@@ -27,7 +27,7 @@ def get_currencies():
 
 
 def get_bot_value(currency):
-    res = requests.get(RED_CUP_URL + currency.upper() + "/USD")
+    res = requests.get(RED_CUP_URL + currency.upper() + "/" + SECOND_CURRENCY)
 
     soup = bs(res.text, "lxml")
     load = json.loads(soup.text)
@@ -39,7 +39,7 @@ def get_bot_value(currency):
 
 
 def get_top_value(currency):
-    res = requests.get(GREEN_CUP_URL + currency.upper() + "_USD")
+    res = requests.get(GREEN_CUP_URL + currency.upper() + "_" + SECOND_CURRENCY)
 
     soup = bs(res.text, "lxml")
     load = json.loads(soup.text)
