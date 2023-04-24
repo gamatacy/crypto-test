@@ -1,10 +1,12 @@
 import csv
+import os
 from currency import Currency
 
-HEADER_ROW = ["Currency", "Red cup bottom Value (USDT$)", "Green cup top value (USDT$)"]
+HEADER_ROW = ["Currency", "AscendEX bottom Value (USDT$)", "GateIO top value (USDT$)", "Difference"]
 
 
 def save_currencies(currencies: list[Currency], file_name: str):
+    os.makedirs(os.path.dirname(file_name), exist_ok=True)
     with open(file_name + '.csv', 'w', newline='') as file:
         writer = csv.writer(file)
 

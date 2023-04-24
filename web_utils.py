@@ -27,19 +27,20 @@ def get_currencies():
     return currencies
 
 
-def get_bot_value(currency):
-    res = requests.get(RED_CUP_URL + currency.upper() + "/" + SECOND_CURRENCY)
+def get_bot_value(curr: str):
+    res = requests.get(RED_CUP_URL + curr.upper() + "/" + SECOND_CURRENCY)
 
     try:
         soup = bs(res.text, "lxml")
         load = json.loads(soup.text)
         return '{0:.7f}'.format(float(load["data"]["data"]["asks"][0][0]))
     except:
+        print("Rate limit")
         return "unavailable"
 
 
-def get_top_value(currency):
-    res = requests.get(GREEN_CUP_URL + currency.upper() + "_" + SECOND_CURRENCY)
+def get_top_value(curr: str):
+    res = requests.get(GREEN_CUP_URL + curr.upper() + "_" + SECOND_CURRENCY)
 
     try:
         soup = bs(res.text, "lxml")
