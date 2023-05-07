@@ -1,57 +1,30 @@
 import datetime
+import pprint
 from time import sleep
 
-import csv_utils
-import web_utils
-from currency import Currency
+from utils import csv_utils
+from web import web_utils
+from currency.currency import Currency
 from threading import Thread
-
-currencies = ['1INCH',
-              'LRC',
-              'ZEC',
-              'BSV',
-              'INJ',
-              'CRV',
-              'CHZ',
-              'SAND',
-              'AXS',
-              'XTZ',
-              'EGLD',
-              'WOO']
-
-curr_list = currencies.copy()
+import currency.static as static
 
 
-def parse_currency(name):
-    tmp = Currency(
-        name,
-        web_utils.get_bot_value(name),
-        web_utils.get_top_value(name)
-    )
-
-    curr_list[currencies.index(tmp.name)] = tmp
+currencies = []
+threads = []
+second_curr = "usdt"
 
 
 def main():
-    global curr_list
+    file_name = datetime.datetime.now().strftime("%m.%d.%Y %H-%M-%S")
+    for curr in static.currencies:
+        threads.append(Thread(target=web_utils.parse_currency, args=(curr, second_curr, currencies, )))
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
 
-    threads = []
+    csv_utils.save_currencies(currencies,"results/" + file_name)
 
-    for i in range(5000):
-        print(i)
-        file_name = datetime.datetime.now().strftime("%m.%d.%Y %H-%M-%S")
-        for curr in currencies:
-            thread = Thread(target=parse_currency, args=(curr,))
-            threads.append(thread)
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
-
-        csv_utils.save_currencies(curr_list, "results/" + file_name)
-        threads.clear()
-        curr_list = currencies.copy()
-        sleep(6)
 
 
 if __name__ == "__main__":
