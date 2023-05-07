@@ -22,7 +22,6 @@ def parse_currency(main_currency, second_currency, currs):
     for market in markets:
         try:
             url = market.get_api_url(main_currency, second_currency)
-            print(url)
             res = requests.get(url)
             soup = bs(res.text, "lxml")
             load = json.loads(soup.text)

@@ -12,6 +12,9 @@ def save_currencies(currencies: list[Currency], file_name: str):
             header_row.append(f"Asks {n}")
             header_row.append(f"Bids {n}")
 
+        for i in range(6):
+            header_row.append("diff")
+
         writer.writerow(header_row)
 
         for curr in currencies:
