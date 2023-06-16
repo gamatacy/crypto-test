@@ -1,15 +1,1 @@
-# crypto-test
-
-
-## Required libraries
-
-```
-pip install beautifulsoup4
-pip install requests
-```
-
-## To run use
-
-```
-python crypto-parser.zip
-```
+# парсер кучи коинов и бирж который никому не нужен(
